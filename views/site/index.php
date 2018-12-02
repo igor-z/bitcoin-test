@@ -1,53 +1,96 @@
 <?php
 
-/* @var $this yii\web\View */
+use app\DTOs\CredentialsDTO;
+use app\DTOs\TransactionDTO;
+use yii\helpers\Html;
+use yii\helpers\Url;
 
-$this->title = 'My Yii Application';
+/**
+ * @var $this yii\web\View
+ * @var TransactionDTO[] $transactions
+ * @var string[] $addresses
+ * @var float $balance
+ * @var string $currentAddress
+ * @var CredentialsDTO $credentials
+ */
+
+$this->title = 'Bitcoin client';
 ?>
+
 <div class="site-index">
+	<div class="well form-horizontal">
+		<div class="form-group">
+			<label class="col-md-2">
+				JSON-RPC Credentials:
+			</label>
+		</div>
+		<div class="form-group">
+			<label class="col-md-2">
+				Server address
+			</label>
+			<div class="col-md-4">
+				<?=$credentials->getHost()?>:<?=$credentials->getPort()?>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-md-2">
+				Username
+			</label>
+			<div class="col-md-4">
+				<?=$credentials->getUserName()?>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-md-2">
+				Password
+			</label>
+			<div class="col-md-4">
+				<?=$credentials->getPassword()?>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-md-4">
+				<form action="<?=Url::to(['site/index'])?>">
+					<button type="submit" class="btn btn-default">Check balance</button>
+				</form>
 
-    <div class="jumbotron">
-        <h1>Congratulations!</h1>
+				<?=Html::beginForm(['site/create-address'])?>
+					<button type="submit" class="btn btn-default">Create new address</button>
+				<?=Html::endForm()?>
+			</div>
+		</div>
+	</div>
 
-        <p class="lead">You have successfully created your Yii-powered application.</p>
+	<div class="row">
+		<div class="col-md-2">
+			<ul class="list-group">
+				<li class="list-group-item active">Balance:</li>
+				<li class="list-group-item">
+					<h3 style="margin: 0" class="font-weight-bold i-balance"><?=$balance?><br>BTC</h3>
+				</li>
+			</ul>
+		</div>
+		<div class="col-md-4">
+			<ul class="list-group">
+				<li class="list-group-item active">My Addresses:</li>
 
-        <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
+				<?php foreach ($addresses as $address):?>
+					<li class="list-group-item"><?=$address?></li>
+				<?php endforeach;?>
+			</ul>
+		</div>
+		<div class="col-md-6">
+			<ul class="list-group">
+				<li class="list-group-item active">Transactions:</li>
 
-    <div class="body-content">
-
-        <div class="row">
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-default" href="http://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
-            </div>
-        </div>
-
-    </div>
+				<?php foreach ($transactions as $transaction):?>
+					<li class="list-group-item">
+						txid: <?=$transaction->getId()?><br>
+						address: <?=$transaction->getAddress()?><br>
+						amount: <?=$transaction->getAmount()?><br>
+					</li>
+				<?php endforeach;?>
+			</ul>
+		</div>
+	</div>
 </div>

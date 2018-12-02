@@ -1,7 +1,13 @@
 <?php
 
+use app\components\bitcoinRpc\Client;
+use app\repositories\BitcoinRepository;
+use app\services\BitcoinService;
+use yii\di\Instance;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
+$bitcoinRpcClient = require __DIR__.'/bitcoin-rpc-client.php';
 
 $config = [
     'id' => 'basic',
@@ -11,6 +17,28 @@ $config = [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+	'container' => [
+		'definitions' => [
+			'bitcoinRepository' => [
+				['class' => BitcoinRepository::class],
+				[Instance::of('bitcoinRpcClient')],
+			],
+			'app\services\BitcoinService' => [
+				['class' => BitcoinService::class],
+				[Instance::of('bitcoinRepository')],
+			],
+		],
+		'singletons' => [
+			'bitcoinRpcClient' => function ($container, $params, $config) use($bitcoinRpcClient) {
+				return new Client(
+					$bitcoinRpcClient['user'],
+					$bitcoinRpcClient['password'],
+					$bitcoinRpcClient['host'],
+					$bitcoinRpcClient['port']
+				);
+			},
+		],
+	],
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation

@@ -14,6 +14,7 @@ Thumbs.db
 
 /config/db.php
 /config/test_db.php
+/config/bitcoin-rpc-client.php
 
 # composer vendor dir
 /vendor

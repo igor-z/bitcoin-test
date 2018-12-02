@@ -2,15 +2,25 @@
 
 namespace app\controllers;
 
+use app\services\BitcoinService;
 use Yii;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use yii\web\Controller;
 use yii\web\Response;
-use yii\filters\VerbFilter;
 
 class SiteController extends Controller
 {
-    /**
+	protected $bitcoinService;
+
+	public function __construct($id, $module, BitcoinService $bitcoinService, array $config = [])
+	{
+		$this->bitcoinService = $bitcoinService;
+
+		parent::__construct($id, $module, $config);
+	}
+
+	/**
      * {@inheritdoc}
      */
     public function behaviors()
@@ -24,6 +34,12 @@ class SiteController extends Controller
 		            ],
 	            ],
             ],
+	        'verbs' => [
+	        	'class' => VerbFilter::class,
+		        'actions' => [
+		            'create-address' => ['POST', 'PUT'],
+		        ],
+	        ]
         ];
     }
 
@@ -39,13 +55,25 @@ class SiteController extends Controller
         ];
     }
 
+    public function actionCreateAddress()
+    {
+	    $this->bitcoinService->createAddress();
+
+		$this->redirect(['index']);
+    }
+
     /**
-     * Displays homepage.
-     *
      * @return string
      */
     public function actionIndex()
     {
-        return $this->render('index');
+		$bitcoin = $this->bitcoinService;
+
+        return $this->render('index', [
+	        'addresses' => $bitcoin->getAddresses(),
+	        'transactions' => $bitcoin->getTransactions(),
+	        'balance' => $bitcoin->getBalance(),
+	        'credentials' => $bitcoin->getCredentials(),
+        ]);
     }
 }
