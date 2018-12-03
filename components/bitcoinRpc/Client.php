@@ -1,9 +1,6 @@
 <?php
 namespace app\components\bitcoinRpc;
 
-use Datto\JsonRpc\Http\Client as HttpClient;
-use Datto\JsonRpc\Response;
-
 class Client implements ClientInterface
 {
 	protected $user;
@@ -11,6 +8,7 @@ class Client implements ClientInterface
 	protected $host;
 	protected $port;
 	protected $client;
+	protected $calls;
 
 	public function __construct(string $user, string $password, string $host, int $port)
 	{
@@ -19,8 +17,9 @@ class Client implements ClientInterface
 		$this->host = $host;
 		$this->port = $port;
 
-		$this->client = new HttpClient($this->host.':'.$this->port, [
-			'Authorization: Basic '.base64_encode($this->user.':'.$this->password),
+		$this->client = new \GuzzleHttp\Client([
+			'base_uri' => "http://{$this->host}:{$this->port}",
+			'auth' => [$this->user, $this->password],
 		]);
 	}
 
@@ -44,18 +43,54 @@ class Client implements ClientInterface
 		return $this->port;
 	}
 
-	public function query(string $id, string $method, $arguments = null) : ClientInterface
+	public function addCall(string $id, string $method, array $arguments = []) : ClientInterface
 	{
-		$this->client->query($id, $method, $arguments);
+		$this->calls[] = [$id, $method, $arguments];
 
 		return $this;
 	}
 
+	public function buildRequestData() : array
+	{
+		$requestData = [];
+
+		foreach ($this->calls as $call) {
+			$requestData[] = [
+				'jsonrpc' => '2.0',
+				'id' => $call[0],
+				'method' => $call[1],
+				'params' => $call[2],
+			];
+		}
+
+		return [
+			'json' => $requestData,
+		];
+	}
+
 	/**
-	 * @return Response[]
+	 * @param string $response
+	 * @return CallResponse[]
+	 */
+	public static function parseResponse(string $response) : array
+	{
+		$callRawResponses = json_decode($response, true);
+
+		$callResponses = [];
+		foreach ($callRawResponses as $callRawResponse) {
+			$callResponses[] = new CallResponse($callRawResponse);
+		}
+
+		return $callResponses;
+	}
+
+	/**
+	 * @return CallResponse[]
 	 */
 	public function send() : array
 	{
-		return $this->client->send();
+		$response = $this->client->post('', $this->buildRequestData());
+
+		return static::parseResponse($response->getBody()->getContents());
 	}
 }

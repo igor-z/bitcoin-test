@@ -7,6 +7,10 @@ interface ClientInterface
 	function getPassword() : string;
 	function getPort() : int;
 	function getUser() : string;
-	function query(string $id, string $method, $arguments = null) : ClientInterface;
+	function addCall(string $id, string $method, array $arguments = []) : ClientInterface;
+
+	/**
+	 * @return CallResponseInterface[]
+	 */
 	function send() : array;
 }

@@ -19,17 +19,15 @@ $config = [
     ],
 	'container' => [
 		'definitions' => [
-			'bitcoinRepository' => [
+			'app\services\BitcoinRepositoryInterface' => [
 				['class' => BitcoinRepository::class],
-				[Instance::of('bitcoinRpcClient')],
+				[Instance::of('app\components\bitcoinRpc\ClientInterface')],
 			],
-			'app\services\BitcoinService' => [
+			'app\services\BitcoinServiceInterface' => [
 				['class' => BitcoinService::class],
-				[Instance::of('bitcoinRepository')],
+				[Instance::of('app\services\BitcoinRepositoryInterface')],
 			],
-		],
-		'singletons' => [
-			'bitcoinRpcClient' => function ($container, $params, $config) use($bitcoinRpcClient) {
+			'app\components\bitcoinRpc\ClientInterface' => function ($container, $params, $config) use($bitcoinRpcClient) {
 				return new Client(
 					$bitcoinRpcClient['user'],
 					$bitcoinRpcClient['password'],

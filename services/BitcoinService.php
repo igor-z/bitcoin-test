@@ -1,11 +1,11 @@
 <?php
 namespace app\services;
 
+use app\DTOs\BalanceDetails;
 use app\DTOs\CredentialsDTO;
-use app\DTOs\TransactionDTO;
 use app\repositories\BitcoinRepositoryInterface;
 
-class BitcoinService
+class BitcoinService implements BitcoinServiceInterface
 {
 	protected $repository;
 
@@ -21,37 +21,33 @@ class BitcoinService
 
 	public function createAddress() : string
 	{
-		return $this->repository->createAddress();
-	}
-
-	public function getBalanceInfo()
-	{
-		$info = [];
+		$address = null;
 
 		$this->repository
+			->createAddress(function ($createdAddress) use(&$address) {
+				$address = $createdAddress;
+			})
+			->query();
 
-		return $info;
+		return $address;
 	}
 
-	public function getBalance() : float
+	public function getBalanceDetails() : BalanceDetails
 	{
-		return $this->repository->fetchBalance();
-	}
+		$details = [];
 
-	/**
-	 * @return string[]
-	 */
-	public function getAddresses() : array
-	{
-		return $this->repository->fetchAddresses();
-	}
+		$this->repository
+			->fetchAddresses(function ($addresses) use(&$details) {
+				$details['addresses'] = $addresses;
+			})
+			->fetchBalance(function ($balance) use(&$details) {
+				$details['balance'] = $balance;
+			})
+			->fetchTransactions(function ($transactions) use(&$details) {
+				$details['transactions'] = $transactions;
+			})
+			->query();
 
-	/**
-	 * @var string $address
-	 * @return TransactionDTO[]
-	 */
-	public function getTransactions() : array
-	{
-		return $this->repository->fetchTransactions();
+		return new BalanceDetails($details['addresses'], $details['transactions'], $details['balance']);
 	}
 }

@@ -2,18 +2,16 @@
 
 namespace app\controllers;
 
-use app\services\BitcoinService;
-use Yii;
+use app\services\BitcoinServiceInterface;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
-use yii\web\Response;
 
 class SiteController extends Controller
 {
 	protected $bitcoinService;
 
-	public function __construct($id, $module, BitcoinService $bitcoinService, array $config = [])
+	public function __construct($id, $module, BitcoinServiceInterface $bitcoinService, array $config = [])
 	{
 		$this->bitcoinService = $bitcoinService;
 
@@ -69,11 +67,13 @@ class SiteController extends Controller
     {
 		$bitcoin = $this->bitcoinService;
 
+		$balanceDetails = $bitcoin->getBalanceDetails();
+
         return $this->render('index', [
-	        'addresses' => $bitcoin->getAddresses(),
-	        'transactions' => $bitcoin->getTransactions(),
-	        'balance' => $bitcoin->getBalance(),
-	        'credentials' => $bitcoin->getCredentials(),
+        	'balance' => $balanceDetails->getBalance(),
+        	'transactions' => $balanceDetails->getTransactions(),
+        	'addresses' => $balanceDetails->getAddresses(),
+        	'credentials' => $bitcoin->getCredentials(),
         ]);
     }
 }
