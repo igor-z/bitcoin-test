@@ -66,7 +66,7 @@ $this->title = 'Bitcoin client';
 			<ul class="list-group">
 				<li class="list-group-item active">Balance:</li>
 				<li class="list-group-item">
-					<h3 style="margin: 0" class="font-weight-bold i-balance"><?=$balance?><br>BTC</h3>
+					<h3 style="margin: 0" class="font-weight-bold i-balance"><?=sprintf("%0.8f", $balance);?><br>BTC</h3>
 				</li>
 			</ul>
 		</div>

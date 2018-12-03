@@ -70,7 +70,7 @@ class Client implements ClientInterface
 
 	/**
 	 * @param string $response
-	 * @return CallResponse[]
+	 * @return CallResponseInterface[]
 	 */
 	public static function parseResponse(string $response) : array
 	{
@@ -85,7 +85,7 @@ class Client implements ClientInterface
 	}
 
 	/**
-	 * @return CallResponse[]
+	 * @return CallResponseInterface[]
 	 */
 	public function send() : array
 	{

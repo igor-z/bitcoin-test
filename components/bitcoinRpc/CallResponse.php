@@ -3,25 +3,29 @@ namespace app\components\bitcoinRpc;
 
 class CallResponse implements CallResponseInterface
 {
-	protected $data;
+	protected $result;
+	protected $error;
+	protected $id;
 
 	public function __construct(array $data)
 	{
-		$this->data = $data;
+		$this->id = $data['id'] ?? null;
+		$this->error = $data['error'] ?? null;
+		$this->result = $data['result'] ?? null;
 	}
 
 	public function getResult()
 	{
-		return $this->data['result'] ?? null;
+		return $this->result;
 	}
 
 	public function getError()
 	{
-		return $this->data['error'] ?? null;
+		return $this->error;
 	}
 
 	public function getId()
 	{
-		return $this->data['id'] ?? null;
+		return $this->id;
 	}
 }
