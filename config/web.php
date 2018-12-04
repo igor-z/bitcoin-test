@@ -11,6 +11,7 @@ $bitcoinRpcClient = require __DIR__.'/bitcoin-rpc-client.php';
 
 $config = [
     'id' => 'basic',
+	'name' => 'Bitcoin Client',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
