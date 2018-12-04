@@ -21,31 +21,19 @@ class BitcoinService implements BitcoinServiceInterface
 
 	public function createAddress() : string
 	{
-		$address = null;
-
-		$this->repository
-			->createAddress(function ($createdAddress) use(&$address) {
-				$address = $createdAddress;
-			})
+		$response = $this->repository
+			->createAddress('address')
 			->query();
 
-		return $address;
+		return $response['address'];
 	}
 
 	public function getBalanceDetails() : BalanceDetails
 	{
-		$details = [];
-
-		$this->repository
-			->fetchAddresses(function ($addresses) use(&$details) {
-				$details['addresses'] = $addresses;
-			})
-			->fetchBalance(function ($balance) use(&$details) {
-				$details['balance'] = $balance;
-			})
-			->fetchTransactions(function ($transactions) use(&$details) {
-				$details['transactions'] = $transactions;
-			})
+		$details = $this->repository
+			->fetchAddresses('addresses')
+			->fetchBalance('balance')
+			->fetchTransactions('transactions')
 			->query();
 
 		return new BalanceDetails($details['addresses'], $details['transactions'], $details['balance']);

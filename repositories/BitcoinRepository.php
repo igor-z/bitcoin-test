@@ -16,17 +16,21 @@ class BitcoinRepository implements BitcoinRepositoryInterface
 		$this->bitcoinRpc = $bitcoinRpc;
 	}
 
-	public function query()
+	public function query() : array
 	{
+		$results = [];
+
 		$responses = $this->bitcoinRpc->send();
 		foreach ($responses as $response) {
 			$responseId = $response->getId();
 			if ($responseId && isset($this->callbacks[$responseId])) {
-				call_user_func($this->callbacks[$responseId], $response);
+				$results[$responseId] = call_user_func($this->callbacks[$responseId], $response);
 			}
 		}
 		
 		$this->callbacks = [];
+
+		return $results;
 	}
 
 	public function getCredentials() : CredentialsDTO
@@ -39,60 +43,55 @@ class BitcoinRepository implements BitcoinRepositoryInterface
 		);
 	}
 
-	public function createAddress(?callable $callback = null) : BitcoinRepositoryInterface
+	public function createAddress(string $resultField) : BitcoinRepositoryInterface
 	{
-		$this->fetch(['getnewaddress'], function (CallResponseInterface $response) use($callback) {
-			if ($callback)
-				call_user_func($callback, $response->getResult());
+		$this->fetch(['getnewaddress'], $resultField, function (CallResponseInterface $response) {
+			return $response->getResult();
 		});
 
 		return $this;
 	}
 
-	public function fetchBalance(callable $callback) : BitcoinRepositoryInterface
+	public function fetchBalance(string $resultField) : BitcoinRepositoryInterface
 	{
-		$this->fetch(['getbalance'], function (CallResponseInterface $response) use($callback) {
-			call_user_func($callback, $response->getResult());
+		$this->fetch(['getbalance'], $resultField, function (CallResponseInterface $response) {
+			return $response->getResult();
 		});
 
 		return $this;
 	}
 
-	public function fetchAddresses(callable $callback) : BitcoinRepositoryInterface
+	public function fetchAddresses(string $resultField) : BitcoinRepositoryInterface
 	{
-		$this->fetch(['listreceivedbyaddress', [0, true]], function (CallResponseInterface $response) use($callback) {
+		$this->fetch(['listreceivedbyaddress', [0, true]], $resultField, function (CallResponseInterface $response) {
 			$addresses = [];
 			foreach ($response->getResult() as $address) {
 				$addresses[] = $address['address'];
 			}
 
-			call_user_func($callback, $addresses);
+			return $addresses;
 		});
 
 		return $this;
 	}
 
-	public function fetchTransactions(callable $callback) : BitcoinRepositoryInterface
+	public function fetchTransactions(string $resultField) : BitcoinRepositoryInterface
 	{
-		$this->fetch(['listtransactions'], function (CallResponseInterface $response) use($callback) {
+		$this->fetch(['listtransactions'], $resultField, function (CallResponseInterface $response) {
 			$transactions = [];
 			foreach ($response->getResult() as $transaction) {
 				$transactions[] = new TransactionDTO($transaction['txid'], $transaction['address'], $transaction['amount']);
 			}
 
-			call_user_func($callback, $transactions);
+			return $transactions;
 		});
 
 		return $this;
 	}
 
-	protected function fetch(array $call, ?callable $callback = null)
+	protected function fetch(array $call, string $resultField, callable $callback)
 	{
-		$id = uniqid();
-
-		$this->bitcoinRpc->addCall($id, $call[0], $call[1] ?? []);
-		if ($callback) {
-			$this->callbacks[$id] = $callback;
-		}
+		$this->bitcoinRpc->addCall($resultField, $call[0], $call[1] ?? []);
+		$this->callbacks[$resultField] = $callback;
 	}
 }

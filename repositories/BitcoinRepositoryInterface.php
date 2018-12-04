@@ -8,20 +8,20 @@ interface BitcoinRepositoryInterface
 {
 	public function getCredentials() : CredentialsDTO;
 
-	public function query();
+	public function query() : array;
 
-	public function createAddress(?callable $callback = null) : BitcoinRepositoryInterface;
+	public function createAddress(string $resultField) : BitcoinRepositoryInterface;
 
-	public function fetchBalance(callable $callback) : BitcoinRepositoryInterface;
+	public function fetchBalance(string $resultField) : BitcoinRepositoryInterface;
 
 	/**
 	 * @return string[]
 	 */
-	public function fetchAddresses(callable $callback) : BitcoinRepositoryInterface;
+	public function fetchAddresses(string $resultField) : BitcoinRepositoryInterface;
 
 	/**
 	 * @var string $address
 	 * @return TransactionDTO[]
 	 */
-	public function fetchTransactions(callable $callback) : BitcoinRepositoryInterface;
+	public function fetchTransactions(string $resultField) : BitcoinRepositoryInterface;
 }
