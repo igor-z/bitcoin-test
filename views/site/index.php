@@ -33,22 +33,6 @@ $this->title = 'Bitcoin client';
 			</div>
 		</div>
 		<div class="form-group">
-			<label class="col-md-2">
-				Username
-			</label>
-			<div class="col-md-4">
-				<?=$credentials->getUserName()?>
-			</div>
-		</div>
-		<div class="form-group">
-			<label class="col-md-2">
-				Password
-			</label>
-			<div class="col-md-4">
-				<?=$credentials->getPassword()?>
-			</div>
-		</div>
-		<div class="form-group">
 			<div class="col-md-4">
 				<form action="<?=Url::to(['site/index'])?>">
 					<button type="submit" class="btn btn-default">Check balance</button>
