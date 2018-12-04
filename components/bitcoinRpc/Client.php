@@ -107,5 +107,7 @@ class Client implements ClientInterface
 		foreach ($callResponses as $callResponse) {
 			static::checkCallResponseError($callResponse);
 		}
+
+		return $callResponses;
 	}
 }
