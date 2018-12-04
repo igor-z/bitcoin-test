@@ -85,12 +85,27 @@ class Client implements ClientInterface
 	}
 
 	/**
+	 * @throws BadRemoteCallException
+	 * @param CallResponseInterface $callResponse
+	 */
+	public static function checkCallResponseError(CallResponseInterface $callResponse)
+	{
+		if ($callResponse->getError()) {
+			throw new BadRemoteCallException($callResponse);
+		}
+	}
+
+	/**
 	 * @return CallResponseInterface[]
 	 */
 	public function send() : array
 	{
 		$response = $this->client->post('', $this->buildRequestData());
 
-		return static::parseResponse($response->getBody()->getContents());
+		$callResponses = static::parseResponse($response->getBody()->getContents());
+
+		foreach ($callResponses as $callResponse) {
+			static::checkCallResponseError($callResponse);
+		}
 	}
 }

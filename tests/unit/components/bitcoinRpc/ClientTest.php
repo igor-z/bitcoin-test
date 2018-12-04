@@ -1,6 +1,8 @@
 <?php
 namespace tests\components\bitcoinRpc;
 
+use app\components\bitcoinRpc\BadRemoteCallException;
+use app\components\bitcoinRpc\CallResponse;
 use app\components\bitcoinRpc\Client as RpcClient;
 
 class ClientTest extends \Codeception\Test\Unit
@@ -73,5 +75,15 @@ class ClientTest extends \Codeception\Test\Unit
 			$this->assertEquals($testCallResponse['error'], $callResponse->getError());
 			$this->assertEquals($testCallResponse['result'], $callResponse->getResult());
 		}
+	}
+
+	public function testResponseException()
+	{
+		$this->expectException(BadRemoteCallException::class);
+		RpcClient::checkCallResponseError(new CallResponse([
+			'result' => 100.00000000,
+			'error' => 'Very bad error',
+			'id' => 'first',
+		]));
 	}
 }
