@@ -20,26 +20,26 @@ return [
         '@npm'   => '@vendor/npm-asset',
     ],
     'language' => 'en-US',
-	'container' => [
-		'definitions' => [
-			'app\services\BitcoinRepositoryInterface' => [
-				['class' => BitcoinRepository::class],
-				[Instance::of('app\components\bitcoinRpc\ClientInterface')],
-			],
-			'app\services\BitcoinServiceInterface' => [
-				['class' => BitcoinService::class],
-				[Instance::of('app\services\BitcoinRepositoryInterface')],
-			],
-			'app\components\bitcoinRpc\ClientInterface' => function ($container, $params, $config) use($bitcoinRpcClient) {
-				return new Client(
-					$bitcoinRpcClient['user'],
-					$bitcoinRpcClient['password'],
-					$bitcoinRpcClient['host'],
-					$bitcoinRpcClient['port']
-				);
-			},
-		],
-	],
+    'container' => [
+        'definitions' => [
+            'app\services\BitcoinRepositoryInterface' => [
+                ['class' => BitcoinRepository::class],
+                [Instance::of('app\components\bitcoinRpc\ClientInterface')],
+            ],
+            'app\services\BitcoinServiceInterface' => [
+                ['class' => BitcoinService::class],
+                [Instance::of('app\services\BitcoinRepositoryInterface')],
+            ],
+            'app\components\bitcoinRpc\ClientInterface' => function ($container, $params, $config) use($bitcoinRpcClient) {
+                return new Client(
+                    $bitcoinRpcClient['user'],
+                    $bitcoinRpcClient['password'],
+                    $bitcoinRpcClient['host'],
+                    $bitcoinRpcClient['port']
+                );
+            },
+        ],
+    ],
     'components' => [
         'db' => $db,
         'mailer' => [

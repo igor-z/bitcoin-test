@@ -11,33 +11,33 @@ $bitcoinRpcClient = require __DIR__.'/bitcoin-rpc-client.php';
 
 $config = [
     'id' => 'basic',
-	'name' => 'Bitcoin Client',
+    'name' => 'Bitcoin Client',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
-	'container' => [
-		'definitions' => [
-			'app\services\BitcoinRepositoryInterface' => [
-				['class' => BitcoinRepository::class],
-				[Instance::of('app\components\bitcoinRpc\ClientInterface')],
-			],
-			'app\services\BitcoinServiceInterface' => [
-				['class' => BitcoinService::class],
-				[Instance::of('app\services\BitcoinRepositoryInterface')],
-			],
-			'app\components\bitcoinRpc\ClientInterface' => function ($container, $params, $config) use($bitcoinRpcClient) {
-				return new Client(
-					$bitcoinRpcClient['user'],
-					$bitcoinRpcClient['password'],
-					$bitcoinRpcClient['host'],
-					$bitcoinRpcClient['port']
-				);
-			},
-		],
-	],
+    'container' => [
+        'definitions' => [
+            'app\services\BitcoinRepositoryInterface' => [
+                ['class' => BitcoinRepository::class],
+                [Instance::of('app\components\bitcoinRpc\ClientInterface')],
+            ],
+            'app\services\BitcoinServiceInterface' => [
+                ['class' => BitcoinService::class],
+                [Instance::of('app\services\BitcoinRepositoryInterface')],
+            ],
+            'app\components\bitcoinRpc\ClientInterface' => function ($container, $params, $config) use($bitcoinRpcClient) {
+                return new Client(
+                    $bitcoinRpcClient['user'],
+                    $bitcoinRpcClient['password'],
+                    $bitcoinRpcClient['host'],
+                    $bitcoinRpcClient['port']
+                );
+            },
+        ],
+    ],
     'components' => [
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation

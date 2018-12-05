@@ -9,16 +9,16 @@ use yii\web\Controller;
 
 class SiteController extends Controller
 {
-	protected $bitcoinService;
+    protected $bitcoinService;
 
-	public function __construct($id, $module, BitcoinServiceInterface $bitcoinService, array $config = [])
-	{
-		$this->bitcoinService = $bitcoinService;
+    public function __construct($id, $module, BitcoinServiceInterface $bitcoinService, array $config = [])
+    {
+        $this->bitcoinService = $bitcoinService;
 
-		parent::__construct($id, $module, $config);
-	}
+        parent::__construct($id, $module, $config);
+    }
 
-	/**
+    /**
      * {@inheritdoc}
      */
     public function behaviors()
@@ -26,18 +26,18 @@ class SiteController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-	            'rules' => [
-		            [
-			            'allow' => true,
-		            ],
-	            ],
+                'rules' => [
+                    [
+                        'allow' => true,
+                    ],
+                ],
             ],
-	        'verbs' => [
-	        	'class' => VerbFilter::class,
-		        'actions' => [
-		            'create-address' => ['POST', 'PUT'],
-		        ],
-	        ]
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'create-address' => ['POST', 'PUT'],
+                ],
+            ]
         ];
     }
 
@@ -55,9 +55,9 @@ class SiteController extends Controller
 
     public function actionCreateAddress()
     {
-	    $this->bitcoinService->createAddress();
+        $this->bitcoinService->createAddress();
 
-		$this->redirect(['index']);
+        $this->redirect(['index']);
     }
 
     /**
@@ -65,15 +65,15 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-		$bitcoin = $this->bitcoinService;
+        $bitcoin = $this->bitcoinService;
 
-		$balanceDetails = $bitcoin->getBalanceDetails();
+        $balanceDetails = $bitcoin->getBalanceDetails();
 
         return $this->render('index', [
-        	'balance' => $balanceDetails->getBalance(),
-        	'transactions' => $balanceDetails->getTransactions(),
-        	'addresses' => $balanceDetails->getAddresses(),
-        	'credentials' => $bitcoin->getCredentials(),
+            'balance' => $balanceDetails->getBalance(),
+            'transactions' => $balanceDetails->getTransactions(),
+            'addresses' => $balanceDetails->getAddresses(),
+            'credentials' => $bitcoin->getCredentials(),
         ]);
     }
 }

@@ -7,35 +7,35 @@ use app\repositories\BitcoinRepositoryInterface;
 
 class BitcoinService implements BitcoinServiceInterface
 {
-	protected $repository;
+    protected $repository;
 
-	public function __construct(BitcoinRepositoryInterface $repository)
-	{
-		$this->repository = $repository;
-	}
+    public function __construct(BitcoinRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
 
-	public function getCredentials() : CredentialsDTO
-	{
-		return $this->repository->getCredentials();
-	}
+    public function getCredentials() : CredentialsDTO
+    {
+        return $this->repository->getCredentials();
+    }
 
-	public function createAddress() : string
-	{
-		$response = $this->repository
-			->createAddress('address')
-			->query();
+    public function createAddress() : string
+    {
+        $response = $this->repository
+            ->createAddress('address')
+            ->query();
 
-		return $response['address'];
-	}
+        return $response['address'];
+    }
 
-	public function getBalanceDetails() : BalanceDetails
-	{
-		$details = $this->repository
-			->fetchAddresses('addresses')
-			->fetchBalance('balance')
-			->fetchTransactions('transactions')
-			->query();
+    public function getBalanceDetails() : BalanceDetails
+    {
+        $details = $this->repository
+            ->fetchAddresses('addresses')
+            ->fetchBalance('balance')
+            ->fetchTransactions('transactions')
+            ->query();
 
-		return new BalanceDetails($details['addresses'], $details['transactions'], $details['balance']);
-	}
+        return new BalanceDetails($details['addresses'], $details['transactions'], $details['balance']);
+    }
 }

@@ -5,8 +5,8 @@ use Exception;
 
 class BadRemoteCallException extends Exception
 {
-	public function __construct(CallResponseInterface $response)
-	{
-		parent::__construct($response->getError());
-	}
+    public function __construct(CallResponseInterface $response)
+    {
+        parent::__construct($response->getError());
+    }
 }
