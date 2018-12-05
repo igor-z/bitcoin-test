@@ -102,6 +102,8 @@ class Client implements ClientInterface
     {
         $response = $this->client->post('', $this->buildRequestData());
 
+        $this->calls = [];
+
         $callResponses = static::parseResponse($response->getBody()->getContents());
 
         foreach ($callResponses as $callResponse) {
